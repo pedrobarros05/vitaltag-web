@@ -1,9 +1,5 @@
-node_modules/
-.next/
-out/
-build/
-.env
+/node_modules
+/.next/
+/out/
 .env.local
 .DS_Store
-*.tsbuildinfo
-coverage/
