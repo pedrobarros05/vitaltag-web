@@ -28,7 +28,7 @@ lib/                 API client and utilities
 ## Running locally (Phase 2)
 
 ```bash
-cp .env.example .env.local     # NEXT_PUBLIC_API_URL=http://localhost:8080
+cp .env.local.example .env.local     # NEXT_PUBLIC_API_URL=http://localhost:8080
 npm install
 npm run dev
 ```
