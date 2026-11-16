@@ -1,31 +1,31 @@
 # VitalTag — Web
 
-Frontend do **VitalTag**, sistema para compartilhamento de informações clínicas em situações de
-emergência no ambiente de trabalho.
+Frontend for **VitalTag**, a system for sharing clinical information during emergencies in the
+workplace.
 
-Projeto da **Disciplina Integradora de Desenvolvimento de Projetos** — Análise e Desenvolvimento
-de Sistemas.
+Project for the **Integrative Project Development course** (Disciplina Integradora de
+Desenvolvimento de Projetos) — Systems Analysis and Development.
 
-Backend: **vitaltag-api** (repositório separado).
+Backend: **vitaltag-api** (separate repository).
 
 ## Stack
 
-- **Next.js 15** (App Router) — SSR na página pública, essencial para abertura rápida no celular
-- **TypeScript** — contratos de API verificados em tempo de compilação
-- **Tailwind CSS + shadcn/ui** — interface mobile-first e acessível (WCAG 2.1 AA)
+- **Next.js 15** (App Router) — SSR on the public page, essential for fast loading on mobile
+- **TypeScript** — API contracts checked at compile time
+- **Tailwind CSS + shadcn/ui** — mobile-first, accessible interface (WCAG 2.1 AA)
 
-## Estrutura
+## Structure
 
 ```
-app/                 rotas do App Router
-  (auth)/            login e criação de conta
-  painel/            área autenticada: formulário clínico, QR Code, cartão de impressão
-  p/[slug]/          página pública protegida por senha
-components/          componentes de interface
-lib/                 cliente da API e utilitários
+app/                 App Router routes
+  (auth)/            login and sign-up
+  painel/            authenticated area: clinical form, QR Code, printable card
+  p/[slug]/          password-protected public page
+components/          UI components
+lib/                 API client and utilities
 ```
 
-## Como rodar (Fase 2)
+## Running locally (Phase 2)
 
 ```bash
 cp .env.example .env.local     # NEXT_PUBLIC_API_URL=http://localhost:8080
@@ -33,8 +33,8 @@ npm install
 npm run dev
 ```
 
-## Telas
+## Screens
 
-O protótipo de alta fidelidade das seis telas principais (login, criação de conta, formulário
-clínico, painel com QR Code, página pública com senha e página pública com os dados) faz parte da
-entrega da Fase 1 da disciplina.
+The high-fidelity prototype of the six main screens (login, sign-up, clinical form, dashboard
+with QR Code, password-protected public page, and public page with the data) is part of the
+course's Phase 1 deliverable.
