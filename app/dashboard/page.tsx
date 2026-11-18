@@ -3,29 +3,29 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { buscarPerfil, gerarQRCode, ApiError } from "@/lib/api";
-import type { PerfilCompleto } from "@/types";
+import { getProfile, getQRCode, ApiError } from "@/lib/api";
+import type { Profile } from "@/types";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [perfil, setPerfil] = useState<PerfilCompleto | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [qrLoading, setQrLoading] = useState(false);
-  const [erro, setErro] = useState("");
+  const [error, setError] = useState("");
 
-  const carregar = useCallback(async () => {
+  const load = useCallback(async () => {
     try {
-      const p = await buscarPerfil();
-      setPerfil(p);
+      const p = await getProfile();
+      setProfile(p);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         router.push("/auth/login");
       } else if (err instanceof ApiError && err.status === 404) {
-        // Sem perfil cadastrado ainda — tudo ok
-        setPerfil(null);
+        // No profile registered yet — that's fine
+        setProfile(null);
       } else {
-        setErro("Erro ao carregar perfil.");
+        setError("Error loading profile.");
       }
     } finally {
       setLoading(false);
@@ -33,23 +33,23 @@ export default function DashboardPage() {
   }, [router]);
 
   useEffect(() => {
-    carregar();
-  }, [carregar]);
+    load();
+  }, [load]);
 
-  async function baixarQR() {
+  async function generateQR() {
     setQrLoading(true);
     try {
-      const blob = await gerarQRCode();
+      const blob = await getQRCode();
       const url = URL.createObjectURL(blob);
       setQrUrl(url);
     } catch {
-      setErro("Erro ao gerar QR Code.");
+      setError("Error generating QR Code.");
     } finally {
       setQrLoading(false);
     }
   }
 
-  function sair() {
+  function signOut() {
     localStorage.removeItem("vitaltag_token");
     router.push("/auth/login");
   }
@@ -57,7 +57,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-slate-500 animate-pulse">Carregando…</div>
+        <div className="text-slate-500 animate-pulse">Loading…</div>
       </div>
     );
   }
@@ -71,43 +71,43 @@ export default function DashboardPage() {
             <span className="text-2xl">❤️</span>
             <span className="font-bold text-slate-800 text-lg">VitalTag</span>
           </div>
-          <button onClick={sair} className="btn-secondary text-sm">
-            Sair
+          <button onClick={signOut} className="btn-secondary text-sm">
+            Sign out
           </button>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-        {erro && (
+        {error && (
           <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            {erro}
+            {error}
           </div>
         )}
 
-        {/* Boas-vindas */}
+        {/* Welcome */}
         <div className="card">
           <h2 className="text-xl font-bold text-slate-800 mb-1">
-            {perfil
-              ? `Olá, ${perfil.nome}! 👋`
-              : "Bem-vindo ao VitalTag! 👋"}
+            {profile
+              ? `Hi, ${profile.firstName}! 👋`
+              : "Welcome to VitalTag! 👋"}
           </h2>
           <p className="text-sm text-slate-500">
-            {perfil
-              ? "Seu perfil de emergência está configurado."
-              : "Configure seu perfil clínico para receber um QR Code de emergência."}
+            {profile
+              ? "Your emergency profile is set up."
+              : "Set up your clinical profile to get an emergency QR Code."}
           </p>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <Link href="/perfil" className="btn-primary">
-              {perfil ? "Editar perfil" : "Configurar perfil"}
+            <Link href="/profile" className="btn-primary">
+              {profile ? "Edit profile" : "Set up profile"}
             </Link>
-            {perfil && (
+            {profile && (
               <button
-                onClick={baixarQR}
+                onClick={generateQR}
                 className="btn-secondary"
                 disabled={qrLoading}
               >
-                {qrLoading ? "Gerando…" : "Gerar QR Code"}
+                {qrLoading ? "Generating…" : "Generate QR Code"}
               </button>
             )}
           </div>
@@ -117,59 +117,59 @@ export default function DashboardPage() {
         {qrUrl && (
           <div className="card text-center">
             <h3 className="text-base font-semibold text-slate-700 mb-4">
-              Seu QR Code de Emergência
+              Your Emergency QR Code
             </h3>
             <img
               src={qrUrl}
-              alt="QR Code de emergência"
+              alt="Emergency QR Code"
               className="mx-auto w-48 h-48 rounded-lg border border-slate-200"
             />
             <p className="text-xs text-slate-500 mt-3 max-w-xs mx-auto">
-              Imprima e carregue com você. Em uma emergência, qualquer pessoa
-              pode escanear e acessar seus dados clínicos.
+              Print it and carry it with you. In an emergency, anyone can scan
+              it and access your clinical data.
             </p>
             <a
               href={qrUrl}
               download="vitaltag-qrcode.png"
               className="btn-primary mt-4 inline-flex"
             >
-              Baixar PNG
+              Download PNG
             </a>
           </div>
         )}
 
-        {/* Resumo do perfil */}
-        {perfil && (
+        {/* Profile summary */}
+        {profile && (
           <div className="card">
             <h3 className="text-base font-semibold text-slate-700 mb-4">
-              Resumo do perfil
+              Profile summary
             </h3>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-              <InfoRow label="Nome" value={`${perfil.nome} ${perfil.sobrenome}`} />
-              <InfoRow label="Nascimento" value={perfil.data_nascimento || "—"} />
-              <InfoRow label="Tipo sanguíneo" value={perfil.tipo_sanguineo || "—"} />
+              <InfoRow label="Name" value={`${profile.firstName} ${profile.lastName}`} />
+              <InfoRow label="Date of birth" value={profile.birthDate || "—"} />
+              <InfoRow label="Blood type" value={profile.bloodType || "—"} />
               <InfoRow
-                label="Alergias"
+                label="Allergies"
                 value={
-                  perfil.alergias?.length
-                    ? `${perfil.alergias.length} registrada(s)`
-                    : "Nenhuma"
+                  profile.allergies.length
+                    ? `${profile.allergies.length} registered`
+                    : "None"
                 }
               />
               <InfoRow
-                label="Medicamentos"
+                label="Medications"
                 value={
-                  perfil.medicamentos?.length
-                    ? `${perfil.medicamentos.length} registrado(s)`
-                    : "Nenhum"
+                  profile.medications.length
+                    ? `${profile.medications.length} registered`
+                    : "None"
                 }
               />
               <InfoRow
-                label="Contatos"
+                label="Contacts"
                 value={
-                  perfil.contatos_emergencia?.length
-                    ? `${perfil.contatos_emergencia.length} registrado(s)`
-                    : "Nenhum"
+                  profile.emergencyContacts.length
+                    ? `${profile.emergencyContacts.length} registered`
+                    : "None"
                 }
               />
             </dl>

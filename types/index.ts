@@ -1,75 +1,81 @@
-// ─── Autenticação ────────────────────────────────────────────────────────────
+// Domain types used throughout the app.
+//
+// The vitaltag-api speaks a Portuguese JSON contract (e.g. `nome`, `contatos_emergencia`).
+// That wire format is confined to lib/api.ts, which maps it to/from the English types below.
 
-export interface RegistroRequest {
-  nome: string;
-  sobrenome: string;
+// ─── Authentication ──────────────────────────────────────────────────────────
+
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
   email: string;
-  senha: string;
-  consentimento: boolean;
+  password: string;
+  consent: boolean;
 }
 
 export interface LoginRequest {
   email: string;
-  senha: string;
+  password: string;
 }
 
 export interface LoginResponse {
   token: string;
 }
 
-// ─── Perfil / Dados Clínicos ─────────────────────────────────────────────────
+// ─── Profile / Clinical data ─────────────────────────────────────────────────
 
-export interface ContatoEmergencia {
-  nome: string;
-  telefone: string;
-  parentesco: string;
+export interface EmergencyContact {
+  name: string;
+  phone: string;
+  relationship: string;
 }
 
-export interface Alergia {
-  descricao: string;
-  gravidade: string;
+export const SEVERITIES = ["mild", "moderate", "severe", "fatal"] as const;
+export type Severity = (typeof SEVERITIES)[number];
+
+export interface Allergy {
+  description: string;
+  /** One of SEVERITIES; unknown values from the API are passed through unchanged. */
+  severity: Severity | (string & {});
 }
 
-export interface Medicamento {
-  nome: string;
+export interface Medication {
+  name: string;
   dose: string;
-  frequencia: string;
+  frequency: string;
 }
 
-export interface Doenca {
-  nome: string;
-  desde: string; // YYYY-MM-DD ou ""
+export interface Condition {
+  name: string;
+  since: string; // YYYY-MM-DD or ""
 }
 
-export interface Cirurgia {
-  procedimento: string;
-  data: string; // YYYY-MM-DD ou ""
+export interface Surgery {
+  procedure: string;
+  date: string; // YYYY-MM-DD or ""
 }
 
-export interface PerfilRequest {
-  nome: string;
-  sobrenome: string;
-  data_nascimento: string; // YYYY-MM-DD
-  tipo_sanguineo: string;
-  senha_publica: string;
-  contatos_emergencia: ContatoEmergencia[];
-  alergias: Alergia[];
-  medicamentos: Medicamento[];
-  doencas: Doenca[];
-  cirurgias: Cirurgia[];
+export interface ProfileRequest {
+  firstName: string;
+  lastName: string;
+  birthDate: string; // YYYY-MM-DD
+  bloodType: string;
+  /** Password for emergency (public) access. Empty = keep the current one. */
+  publicPassword: string;
+  emergencyContacts: EmergencyContact[];
+  allergies: Allergy[];
+  medications: Medication[];
+  conditions: Condition[];
+  surgeries: Surgery[];
 }
 
-export interface PerfilCompleto extends Omit<PerfilRequest, "senha_publica"> {
+export interface Profile extends Omit<ProfileRequest, "publicPassword"> {
   slug: string;
-  usuario_id: string;
+  userId: string;
 }
 
-// ─── Acesso público ───────────────────────────────────────────────────────────
+// ─── Public access ───────────────────────────────────────────────────────────
 
-export interface AcessoPublicoRequest {
-  senha: string;
-}
-
-export interface ErroResponse {
-  erro: string;
+export interface PublicAccessRequest {
+  password: string;
 }

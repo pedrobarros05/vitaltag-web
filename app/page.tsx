@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-// Raiz → redireciona para login
+// Root → redirect to login
 export default function Home() {
   redirect("/auth/login");
 }

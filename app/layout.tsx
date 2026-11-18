@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "VitalTag — Dados de Emergência",
+  title: "VitalTag — Emergency Data",
   description:
-    "Registre suas informações clínicas e gere um QR Code para situações de emergência.",
+    "Register your clinical information and generate a QR Code for emergencies.",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

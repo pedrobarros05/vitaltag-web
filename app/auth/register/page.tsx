@@ -3,37 +3,37 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { registrar, ApiError } from "@/lib/api";
+import { register, ApiError } from "@/lib/api";
 
-export default function RegistroPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
-    nome: "",
-    sobrenome: "",
+    firstName: "",
+    lastName: "",
     email: "",
-    senha: "",
-    consentimento: false,
+    password: "",
+    consent: false,
   });
-  const [erro, setErro] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   function set(field: string, value: string | boolean) {
     setForm((f) => ({ ...f, [field]: value }));
-    setErro("");
+    setError("");
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.consentimento) {
-      setErro("Você precisa aceitar o uso dos seus dados.");
+    if (!form.consent) {
+      setError("You must consent to the use of your data.");
       return;
     }
     setLoading(true);
     try {
-      await registrar(form);
-      router.push("/auth/login?cadastrado=1");
+      await register(form);
+      router.push("/auth/login?registered=1");
     } catch (err) {
-      setErro(err instanceof ApiError ? err.message : "Erro ao criar conta.");
+      setError(err instanceof ApiError ? err.message : "Error creating account.");
     } finally {
       setLoading(false);
     }
@@ -42,14 +42,14 @@ export default function RegistroPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        {/* Logo / título */}
+        {/* Logo / title */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white text-2xl font-bold mb-4 shadow-lg">
             ❤️
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">Criar conta</h1>
+          <h1 className="text-2xl font-bold text-slate-800">Create account</h1>
           <p className="text-sm text-slate-500 mt-1">
-            VitalTag — seus dados de emergência, sempre acessíveis
+            VitalTag — your emergency data, always accessible
           </p>
         </div>
 
@@ -57,73 +57,73 @@ export default function RegistroPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="label">Nome</label>
+                <label className="label">First name</label>
                 <input
                   className="input"
                   required
-                  value={form.nome}
-                  onChange={(e) => set("nome", e.target.value)}
-                  placeholder="João"
+                  value={form.firstName}
+                  onChange={(e) => set("firstName", e.target.value)}
+                  placeholder="John"
                 />
               </div>
               <div>
-                <label className="label">Sobrenome</label>
+                <label className="label">Last name</label>
                 <input
                   className="input"
                   required
-                  value={form.sobrenome}
-                  onChange={(e) => set("sobrenome", e.target.value)}
-                  placeholder="Silva"
+                  value={form.lastName}
+                  onChange={(e) => set("lastName", e.target.value)}
+                  placeholder="Smith"
                 />
               </div>
             </div>
 
             <div>
-              <label className="label">E-mail</label>
+              <label className="label">Email</label>
               <input
                 className="input"
                 type="email"
                 required
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}
-                placeholder="joao@exemplo.com"
+                placeholder="john@example.com"
               />
             </div>
 
             <div>
-              <label className="label">Senha</label>
+              <label className="label">Password</label>
               <input
                 className="input"
                 type="password"
                 required
                 minLength={8}
-                value={form.senha}
-                onChange={(e) => set("senha", e.target.value)}
-                placeholder="Mínimo 8 caracteres"
+                value={form.password}
+                onChange={(e) => set("password", e.target.value)}
+                placeholder="At least 8 characters"
               />
             </div>
 
-            {/* Consentimento LGPD */}
+            {/* LGPD consent */}
             <div className="rounded-lg bg-blue-50 border border-blue-100 p-3">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                  checked={form.consentimento}
-                  onChange={(e) => set("consentimento", e.target.checked)}
+                  checked={form.consent}
+                  onChange={(e) => set("consent", e.target.checked)}
                 />
                 <span className="text-xs text-slate-600 leading-relaxed">
-                  Concordo com o armazenamento e uso dos meus dados de saúde
-                  para fins de emergência médica, conforme a{" "}
-                  <strong>Lei Geral de Proteção de Dados (LGPD)</strong>. Posso
-                  excluir minha conta e dados a qualquer momento.
+                  I consent to the storage and use of my health data for medical
+                  emergency purposes, in accordance with Brazil&apos;s{" "}
+                  <strong>General Data Protection Law (LGPD)</strong>. I can
+                  delete my account and data at any time.
                 </span>
               </label>
             </div>
 
-            {erro && (
+            {error && (
               <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                {erro}
+                {error}
               </p>
             )}
 
@@ -132,15 +132,15 @@ export default function RegistroPage() {
               className="btn-primary w-full mt-2"
               disabled={loading}
             >
-              {loading ? "Criando conta…" : "Criar conta"}
+              {loading ? "Creating account…" : "Create account"}
             </button>
           </form>
         </div>
 
         <p className="text-center text-sm text-slate-500 mt-6">
-          Já tem conta?{" "}
+          Already have an account?{" "}
           <Link href="/auth/login" className="text-blue-600 font-medium hover:underline">
-            Entrar
+            Sign in
           </Link>
         </p>
       </div>
