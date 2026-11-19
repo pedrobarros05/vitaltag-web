@@ -6,28 +6,42 @@
     "dev": "next dev",
     "dev:mock": "node mock-api/dev.mjs",
     "mock": "node mock-api/server.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:mock": "node --test mock-api/server.test.mjs",
+    "test:e2e": "playwright test",
+    "test:all": "npm run test:mock && npm test && npm run test:e2e",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint --dir app --dir components --dir lib --dir types --dir tests --dir mock-api"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "lucide-react": "^0.462.0",
-    "next": "15.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "next": "15.0.8",
+    "react": "~19.0.9",
+    "react-dom": "~19.0.9"
   },
   "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "~6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.10",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "~19.0.0",
+    "@types/react-dom": "~19.0.0",
+    "@vitejs/plugin-react": "^6.3.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
-    "eslint-config-next": "15.0.0",
+    "eslint-config-next": "15.0.8",
+    "jsdom": "^29.1.1",
     "postcss": "^8",
     "qrcode": "^1.5.4",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.12"
   }
 }

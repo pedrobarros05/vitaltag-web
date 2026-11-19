@@ -119,6 +119,8 @@ export default function DashboardPage() {
             <h3 className="text-base font-semibold text-slate-700 mb-4">
               Your Emergency QR Code
             </h3>
+            {/* blob: URL created in the browser — next/image can't optimize it */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={qrUrl}
               alt="Emergency QR Code"

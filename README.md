@@ -27,6 +27,9 @@ components/                UI components
 lib/api.ts                 API client — the only place that knows the API's wire format
 types/                     domain types (English) used across the app
 mock-api/                  API mock to run without the backend (see below)
+tests/unit/                Vitest: lib/api.ts mapping + UI components
+tests/e2e/                 Playwright: end-to-end tests of the six screens (against the mock)
+docs/testing.md            how the tests work
 ```
 
 `/publico/<slug>` (the public page's former URL) redirects to `/public/<slug>`, so QR Codes that
@@ -93,6 +96,27 @@ WEB_URL=http://192.168.0.10:3000 NEXT_PUBLIC_API_URL=http://192.168.0.10:8080 np
 
 > Data is kept **in memory**: restarting the mock resets it to the initial state. If the mock
 > restarts while you're signed in, your token becomes invalid and the app redirects to login.
+
+## Tests
+
+```bash
+npm test               # Vitest: lib/api.ts (Portuguese wire ⇄ English types) + UI components
+npx playwright test    # E2E in Chromium: login, registration, profile, QR Code, public page, /publico redirect
+npm run test:mock      # the API mock's own tests
+npm run test:all       # mock + Vitest + E2E
+npm run lint           # ESLint (app, tests and mock)
+npm run typecheck      # tsc --noEmit
+```
+
+None of them need the backend. Playwright starts the mock and a production build of the app on
+their own ports (`:8090` / `:3100`), so they can run while `npm run dev:mock` is running. If
+Chromium isn't installed yet: `npx playwright install chromium`.
+
+CI (`.github/workflows/web-tests.yml` at the repository root) runs all of the above on every push
+and pull request.
+
+See [docs/testing.md](docs/testing.md) for what's covered, how to write new tests, and an
+example of breaking the code on purpose to watch the tests fail.
 
 ## Screens
 

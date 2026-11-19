@@ -57,8 +57,9 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="label">First name</label>
+                <label className="label" htmlFor="firstName">First name</label>
                 <input
+                  id="firstName"
                   className="input"
                   required
                   value={form.firstName}
@@ -67,8 +68,9 @@ export default function RegisterPage() {
                 />
               </div>
               <div>
-                <label className="label">Last name</label>
+                <label className="label" htmlFor="lastName">Last name</label>
                 <input
+                  id="lastName"
                   className="input"
                   required
                   value={form.lastName}
@@ -79,8 +81,9 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="label">Email</label>
+              <label className="label" htmlFor="email">Email</label>
               <input
+                id="email"
                 className="input"
                 type="email"
                 required
@@ -91,8 +94,9 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="label">Password</label>
+              <label className="label" htmlFor="password">Password</label>
               <input
+                id="password"
                 className="input"
                 type="password"
                 required

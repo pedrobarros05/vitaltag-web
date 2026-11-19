@@ -67,8 +67,9 @@ export default function PublicPage({
             </p>
             <form onSubmit={handleAccess} className="space-y-4">
               <div>
-                <label className="label">Emergency password</label>
+                <label className="label" htmlFor="public-password">Emergency password</label>
                 <input
+                  id="public-password"
                   className="input text-center text-lg tracking-widest"
                   type="password"
                   required

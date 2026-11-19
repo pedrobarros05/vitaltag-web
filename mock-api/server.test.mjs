@@ -142,7 +142,7 @@ test("login: wrong credentials → 401; correct → token", async () => {
   assert.equal(bad.status, 401);
   assert.equal(typeof bad.data.erro, "string");
 
-  const ok = await call("POST", "/auth/login", { body: { email: "Demo@VitalTag.com", senha: "demo1234" } });
+  const ok = await call("POST", "/auth/login", { body: { email: "Demo@Example.com", senha: "demo1234" } });
   assert.equal(ok.status, 200);
   assert.equal(typeof ok.data.token, "string");
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { cloneElement, useCallback, useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getProfile, saveProfile, deleteProfile, ApiError } from "@/lib/api";
@@ -475,6 +475,8 @@ function Section({
   );
 }
 
+/** Label + one form control. Links them (htmlFor/id) and the hint (aria-describedby) so screen
+ *  readers announce the field's name and hint; useId keeps ids unique across list items. */
 function Field({
   label,
   hint,
@@ -482,13 +484,21 @@ function Field({
 }: {
   label: string;
   hint?: string;
-  children: React.ReactNode;
+  children: React.ReactElement<{ id?: string; "aria-describedby"?: string }>;
 }) {
+  const id = useId();
+  const hintId = `${id}-hint`;
   return (
     <div>
-      <label className="label">{label}</label>
-      {children}
-      {hint && <p className="text-xs text-slate-400 mt-1">{hint}</p>}
+      <label className="label" htmlFor={id}>
+        {label}
+      </label>
+      {cloneElement(children, { id, "aria-describedby": hint ? hintId : undefined })}
+      {hint && (
+        <p id={hintId} className="text-xs text-slate-400 mt-1">
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
