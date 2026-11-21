@@ -1,0 +1,66 @@
+name: Web delivery
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+concurrency:
+  group: web-delivery-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package production build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Assemble standalone artifact
+        run: |
+          mkdir -p artifact
+          cp -R .next/standalone/. artifact/
+          cp -R .next/static artifact/.next/static
+          if [ -d public ]; then cp -R public artifact/public; fi
+          tar -czf "vitaltag-web-${GITHUB_SHA}.tar.gz" -C artifact .
+
+      - name: Upload production artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: vitaltag-web-${{ github.sha }}
+          path: vitaltag-web-${{ github.sha }}.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish tagged release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: package
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download production artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: vitaltag-web-${{ github.sha }}
+
+      - name: Publish tagged release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "vitaltag-web-${GITHUB_SHA}.tar.gz" --generate-notes

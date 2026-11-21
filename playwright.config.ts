@@ -35,12 +35,17 @@ export default defineConfig({
     {
       // NEXT_PUBLIC_API_URL is inlined at build time, so build for the mock's port. The build
       // goes to .next-e2e (see distDir in next.config.ts) to leave `next dev`'s .next alone.
-      command: `npx next build && npx next start --port ${WEB_PORT}`,
+      command:
+        "npx next build && mkdir -p .next-e2e/standalone/.next-e2e && " +
+        "cp -R .next-e2e/static .next-e2e/standalone/.next-e2e/static && " +
+        "cd .next-e2e/standalone && node server.js",
       url: `${WEB_URL}/auth/login`,
       env: {
         NEXT_PUBLIC_API_URL: API_URL,
         NEXT_DIST_DIR: ".next-e2e",
         NEXT_TELEMETRY_DISABLED: "1",
+        HOSTNAME: "127.0.0.1",
+        PORT: String(WEB_PORT),
       },
       reuseExistingServer: false,
       timeout: 240_000,

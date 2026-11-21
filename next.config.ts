@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+
   // The Go backend runs on :8080 in local dev
 
   // E2E tests (playwright.config.ts) build into their own folder so a test run never clobbers

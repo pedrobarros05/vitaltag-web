@@ -115,6 +115,12 @@ Chromium isn't installed yet: `npx playwright install chromium`.
 CI (`.github/workflows/web-tests.yml` at the repository root) runs all of the above on every push
 and pull request.
 
+Additional automation reviews dependency changes, scans JavaScript/TypeScript with CodeQL,
+audits npm dependencies, and publishes a standalone production artifact for `main` and
+version tags. Dependabot keeps npm and GitHub Actions updates current. The `main` branch
+requires pull requests and the quality, E2E, CodeQL, and dependency-review checks; only the
+repository owner can bypass those rules for an urgent direct change.
+
 See [docs/testing.md](docs/testing.md) for what's covered, how to write new tests, and an
 example of breaking the code on purpose to watch the tests fail.
 
